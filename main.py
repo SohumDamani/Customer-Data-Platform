@@ -10,9 +10,9 @@ def get():
     return {"status": "ok"}
 
 @api.get("/customers",response_model=list[CustomerOut])
-def get_customers():
+def get_customers(page: int, page_size: int):
     session = Session(db)
-
-    result = session.query(Customer).all()
-
+    # so page 1 
+    record_start = (page-1)*page_size
+    result = session.query(Customer).limit(page_size).offset(record_start).all()
     return result
