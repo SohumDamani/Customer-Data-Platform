@@ -1,63 +1,100 @@
 import { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState({ result: [], total: 0 });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const pagesize = 20
+  const pageSize = 20;
 
   useEffect(() => {
-    fetch(`http://localhost:8000/customers?page=${page}&page_size=${pagesize}&search=${search}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCustomers(data);
-        setLoading(false);
-      });
-  }, [search,page]);
+    const timer = setTimeout(() => {
+      setLoading(true);
+      fetch(
+        `http://localhost:8000/customers?page=${page}&page_size=${pageSize}&search=${search}`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setCustomers(data);
+          setLoading(false);
+        });
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search, page]);
+
+  const results = customers.result;
+  const total = customers.total;
+  const startRow = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const endRow = Math.min(page * pageSize, total);
 
   return (
-    <div>
-      {loading ? (
-        <p> Loading ....</p>
-      ) : (
-        <div>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} />
-          <table>
-            <caption>Customers</caption>
-            <tr>
-              <th>id</th>
-              <th>firstname</th>
-              <th>lastname</th>
-              <th>email</th>
-              <th>phone</th>
-              <th>region</th>
-            </tr>
-            {customers['result'].map((customer) => (
-              <tr key={customer.id}>
-                <td>{customer.id}</td>
-                <td>{customer.firstname}</td>
-                <td>{customer.lastname}</td>
-                <td>{customer.email}</td>
-                <td>{customer.phone}</td>
-                <td>{customer.region}</td>
-              </tr>
-            ))}
-          </table>
-          <div>
-          <button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 1}
-          >
-            Previous Page
-          </button>          
-          <button 
-          onClick={()=> setPage(page+1)}
-          disabled = {page*pagesize>=customers['total']}> Next Page</button>
-          </div>
+    <div className="app">
+      <div className="app-header">
+        <h1>Customer Directory</h1>
+        <p>Search by name or company across all records.</p>
+      </div>
 
+      <input
+        className="search-bar"
+        placeholder="Search customers..."
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setPage(1);
+        }}
+      />
+
+      <div className="table-wrap">
+        {loading ? (
+          <div className="loading-state">Loading customers...</div>
+        ) : results.length === 0 ? (
+          <div className="empty-state">No customers match "{search}".</div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Company</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Region</th>
+              </tr>
+            </thead>
+            <tbody>
+              {results.map((customer) => (
+                <tr key={customer.id}>
+                  <td>{customer.firstname}</td>
+                  <td>{customer.lastname}</td>
+                  <td>{customer.company}</td>
+                  <td>{customer.email}</td>
+                  <td>{customer.phone}</td>
+                  <td>{customer.region}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="status-bar">
+        <span>
+          {total > 0 ? `Showing ${startRow}–${endRow} of ${total}` : ""}
+        </span>
+        <div className="pagination">
+          <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+            Previous
+          </button>
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={page * pageSize >= total}
+          >
+            Next
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }
