@@ -4,15 +4,16 @@ function App() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/customers?page=1&page_size=20&search=${search}`)
+    fetch(`http://localhost:8000/customers?page=${page}&page_size=20&search=${search}`)
       .then((response) => response.json())
       .then((data) => {
         setCustomers(data);
         setLoading(false);
       });
-  }, [search]);
+  }, [search,page]);
 
   return (
     <div>
@@ -42,6 +43,11 @@ function App() {
               </tr>
             ))}
           </table>
+          <div>
+          <button onClick={()=> setPage(page>1?page-1:1)}> Previous Page</button>
+          <button onClick={()=> setPage(page+1)}> Next Page</button>
+          </div>
+
         </div>
       )}
     </div>
