@@ -67,7 +67,7 @@ table {
 }
 
 thead th {
-  text-align: left;
+  text-align: center;
   padding: 12px 16px;
   background: #262a40;
   color: #8b90a8;
@@ -79,6 +79,7 @@ thead th {
 }
 
 tbody td {
+  text-align: center;
   padding: 12px 16px;
   border-bottom: 1px solid #2c3049;
   color: #e8eaf0;
