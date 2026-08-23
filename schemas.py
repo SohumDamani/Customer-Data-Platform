@@ -14,3 +14,7 @@ class CustomerOut(BaseModel):
     phone: Optional[str] = Field(None, description="Phone number of the customer")
     region: str = Field(..., description="US state/region of the customer")
 
+
+class CustomerListOut(BaseModel):
+    total :int
+    result: list[CustomerOut]

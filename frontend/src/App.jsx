@@ -5,9 +5,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const pagesize = 20
 
   useEffect(() => {
-    fetch(`http://localhost:8000/customers?page=${page}&page_size=20&search=${search}`)
+    fetch(`http://localhost:8000/customers?page=${page}&page_size=${pagesize}&search=${search}`)
       .then((response) => response.json())
       .then((data) => {
         setCustomers(data);
@@ -32,7 +33,7 @@ function App() {
               <th>phone</th>
               <th>region</th>
             </tr>
-            {customers.map((customer) => (
+            {customers['result'].map((customer) => (
               <tr key={customer.id}>
                 <td>{customer.id}</td>
                 <td>{customer.firstname}</td>
@@ -44,8 +45,15 @@ function App() {
             ))}
           </table>
           <div>
-          <button onClick={()=> setPage(page>1?page-1:1)}> Previous Page</button>
-          <button onClick={()=> setPage(page+1)}> Next Page</button>
+          <button
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+          >
+            Previous Page
+          </button>          
+          <button 
+          onClick={()=> setPage(page+1)}
+          disabled = {page*pagesize>=customers['total']}> Next Page</button>
           </div>
 
         </div>

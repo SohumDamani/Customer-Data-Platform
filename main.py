@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from models import Customer,db
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from schemas import CustomerOut
+from schemas import CustomerListOut
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -19,7 +19,7 @@ api.add_middleware(
 def get():
     return {"status": "ok"}
 
-@api.get("/customers",response_model=list[CustomerOut])
+@api.get("/customers",response_model=CustomerListOut)
 def get_customers(page: int, page_size: int, search: Optional[str]=None):
     session = Session(db)
     try:
@@ -31,13 +31,16 @@ def get_customers(page: int, page_size: int, search: Optional[str]=None):
                 Customer.lastname.like(f"%{search}%"),
                 Customer.company.like(f"%{search}%")
                 ))
-        record_start = (page-1)*page_size
-        result = result.limit(page_size).offset(record_start).all()
-        return result
+        total,result = paginate(result,page,page_size)
+        return {"result": result, "total": total}
     finally:
         session.close()
 
-
+def paginate(query, page: int, page_size: int):
+    total = query.count()
+    record_start = (page-1)*page_size
+    result = query.limit(page_size).offset(record_start).all()
+    return total, result
     
 
 
