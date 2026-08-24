@@ -3,21 +3,23 @@ import "./App.css";
 
 function App() {
   const [customers, setCustomers] = useState({ result: [], total: 0 });
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(true);
+      setFetching(true);
       fetch(
         `http://localhost:8000/customers?page=${page}&page_size=${pageSize}&search=${search}`,
       )
         .then((response) => response.json())
         .then((data) => {
           setCustomers(data);
-          setLoading(false);
+          setInitialLoading(false);
+          setFetching(false);
         });
     }, 400);
 
@@ -46,8 +48,8 @@ function App() {
         }}
       />
 
-      <div className="table-wrap">
-        {loading ? (
+      <div className={`table-wrap${fetching ? " table-wrap--fetching" : ""}`}>
+        {initialLoading ? (
           <div className="loading-state">Loading customers...</div>
         ) : results.length === 0 ? (
           <div className="empty-state">No customers match "{search}".</div>
