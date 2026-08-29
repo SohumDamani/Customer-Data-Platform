@@ -45,18 +45,24 @@ function App() {
     const { name, value } = event.target;
     setNewCustomer(prevCustomer => ({
       ...prevCustomer,
-      [name]: value
+      [name]: value,
     }));
   }
 
   async function handleNewCustomer(event) {
     event.preventDefault();
+    const payload = {
+      ...newCustomer,
+      phone: newCustomer.phone == ""? null : newCustomer.phone,
+      email: newCustomer.email == ""? null : newCustomer.email
+    };
+
     const res = await fetch(`${API_BASE}/customers`,{
       method : "POST",
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(newCustomer)
+      body: JSON.stringify(payload)
     })
     const data = await res.json();
     if(!res.ok){
@@ -65,7 +71,6 @@ function App() {
       setShowForm(false);
       setNewCustomer(defaultCustomer);
       return fetchCustomers();
-
     }
   }
 
@@ -87,12 +92,12 @@ function App() {
           <form className="modal-form" onClick={(e)=> e.stopPropagation()} onSubmit={handleNewCustomer}>
             <h2>Create New Customer</h2>
 
-            <input className="form-input" type="text" name ="firstname" placeholder="First Name" value = {newCustomer.firstname} onChange={handleFormChange} />
-            <input className="form-input" type="text" name="lastname" placeholder="Last Name" value = {newCustomer.lastname} onChange={handleFormChange} />
-            <input className="form-input" type="text" name="company" placeholder="Company" value = {newCustomer.company} onChange={handleFormChange} />
+            <input className="form-input" type="text" name ="firstname" required placeholder="First Name" value = {newCustomer.firstname} onChange={handleFormChange} />
+            <input className="form-input" type="text" name="lastname" required placeholder="Last Name" value = {newCustomer.lastname} onChange={handleFormChange} />
+            <input className="form-input" type="text" name="company" required placeholder="Company" value = {newCustomer.company} onChange={handleFormChange} />
             <input className="form-input" type="email" name="email" placeholder="Email" value = {newCustomer.email} onChange={handleFormChange} />
             <input className="form-input" type="tel" name="phone" placeholder="Phone" value = {newCustomer.phone} onChange={handleFormChange} />
-            <input className="form-input" type="text" name="region" placeholder="Region" value = {newCustomer.region} onChange={handleFormChange} />
+            <input className="form-input" type="text" name="region" required placeholder="Region" value = {newCustomer.region} onChange={handleFormChange} />
             <button className="modal-submit-btn" type="submit">Submit</button>
           </form>
         </div>
