@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from models import Customer,db
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from schemas import CustomerListOut
+from schemas import CustomerListOut,CustomerCreate,CustomerOut
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,6 +35,26 @@ def get_customers(page: int, page_size: int, search: Optional[str]=None):
         return {"result": result, "total": total}
     finally:
         session.close()
+
+@api.post("/customers",response_model=CustomerOut,status_code=201)
+def post_customer(customer: CustomerCreate):
+    session = Session(db)
+    try:
+        newCustomer = Customer(firstname = customer.firstname, 
+                            lastname = customer.lastname, 
+                            company = customer.company,
+                            email = customer.email,
+                            phone = customer.phone,
+                            region = customer.region)
+        session.add(newCustomer)
+        session.commit()
+        session.refresh(newCustomer)
+        return newCustomer
+
+    finally:
+        session.close()
+
+
 
 def paginate(query, page: int, page_size: int):
     total = query.count()
