@@ -138,3 +138,92 @@ tbody tr:hover {
   color: #8b90a8;
   font-size: 0.9rem;
 }
+
+.add-customer-btn {
+  padding: 8px 16px;
+  background: #22263a;
+  border: 1px solid #333850;
+  color: #e8eaf0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.add-customer-btn:hover:not(:disabled) {
+  background: #2c3049;
+  border-color: #5b8def;
+}
+
+.add-customer-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-form {
+  background: #22263a;
+  border: 1px solid #2c3049;
+  border-radius: 10px;
+  padding: 24px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #e8eaf0;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  background: #1a1d29;
+  border: 1px solid #333850;
+  border-radius: 8px;
+  color: #e8eaf0;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.form-input::placeholder {
+  color: #6b7089;
+}
+
+.form-input:focus {
+  border-color: #5b8def;
+}
+
+.modal-submit-btn {
+  padding: 10px 16px;
+  background: #5b8def;
+  border: none;
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.modal-submit-btn:hover {
+  background: #4a7bd9;
+}
