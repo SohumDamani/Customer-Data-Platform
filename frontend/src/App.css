@@ -60,6 +60,10 @@ body {
   overflow: hidden;
 }
 
+.table-wrap--fetching{
+pointer-events: none;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
