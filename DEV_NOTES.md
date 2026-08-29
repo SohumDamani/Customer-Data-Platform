@@ -13,8 +13,9 @@ manual spreadsheet-based process for looking up and maintaining customer records
 
 **Stack:** FastAPI + SQLAlchemy (backend), React + Vite (frontend), SQLite (dev).
 
-**Current state:** `GET /customers` with server-side pagination and search; React table
-with search input and Next/Previous controls; full request path wired end to end.
+**Current state:** `GET /customers` and `POST /customers` both complete, backend and
+frontend — search/pagination table, plus an "Add Customer" modal form with client-side
+`required` validation, null-coalescing on optional fields, and a refetch-on-success flow.
 
 **Planned sequence (locked, in order):**
 
@@ -24,6 +25,36 @@ with search input and Next/Previous controls; full request path wired end to end
 4. Tests, CI, load-testing analysis
 
 Anything outside this list is out of scope until step 4 is complete.
+
+### Future Vision (post-locked-sequence, not yet scoped)
+
+Recorded 2026-08-29 for continuity — not a commitment to build, and not reordering the
+locked sequence above. The project's shape has clarified beyond "a table with search":
+
+- Each tenant (a business using the platform) manages its own set of client records —
+  this is the concrete use case Entry 001's `account_id` tenant-isolation model was
+  chosen for. Step 2 (Auth + multi-tenancy) is where this actually gets built.
+- An admin role that can view across all of a tenant's clients and build a dashboard
+  scoped to them.
+- Per-tenant dashboards: search/filter by region, map-based visualization of client
+  locations.
+
+**Terminology flag, to resolve at step 2, not now:** the current `Customer` model is what
+this vision calls a "client" (a tenant's managed record) — "customer" in the new framing
+means the paying tenant itself. Renaming `Customer` → `Client` (or naming the new tenant
+table something other than "Customer") is a live decision once the tenant/`Account` table
+is actually built — flagged now so it's deliberate rather than stumbled into.
+
+### Deferred: Inline Per-Field Validation Errors
+
+Currently, a failed `POST` shows one `alert()` with all validation messages joined
+together, rather than highlighting the specific invalid input. Deliberately deferred:
+the backend already rejects invalid data (the actual correctness boundary), the modal
+already stays open with entered data intact on failure, and building per-field error
+mapping (matching FastAPI's `detail[].loc` to the right input, plus per-field error
+state and styling) is real UI work with no correctness payoff — pure polish. Revisit
+after `PUT`'s edit form exists, since the two forms will share enough shape to see the
+right abstraction rather than guessing at it now.
 
 ---
 
