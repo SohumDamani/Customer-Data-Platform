@@ -19,11 +19,31 @@ function App() {
     phone: "",
     region: ""
   }
-  const [newCustomer, setnewCustomer] = useState(defaultCustomer);
+  const [newCustomer, setNewCustomer] = useState(defaultCustomer);
+
+  function fetchCustomers(){
+    const timer = setTimeout(() => {
+      setFetching(true);
+      fetch(
+        `${API_BASE}/customers?page=${page}&page_size=${pageSize}&search=${search}`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setCustomers(data);
+          setInitialLoading(false);
+          setFetching(false);
+        });
+    }, 400);
+    return () => clearTimeout(timer);
+  }
+
+  useEffect(() => {
+    return fetchCustomers()
+  }, [search,page]);
 
   function handleFormChange(event) {
     const { name, value } = event.target;
-    setnewCustomer(prevCustomer => ({
+    setNewCustomer(prevCustomer => ({
       ...prevCustomer,
       [name]: value
     }));
@@ -43,31 +63,11 @@ function App() {
       alert(data.detail.map(err => err.msg).join(", "))
     }else{
       setShowForm(false);
-      setnewCustomer(defaultCustomer);
-      return fetchCustomer();
+      setNewCustomer(defaultCustomer);
+      return fetchCustomers();
 
     }
   }
-
-  function fetchCustomer(){
-    const timer = setTimeout(() => {
-      setFetching(true);
-      fetch(
-        `${API_BASE}/customers?page=${page}&page_size=${pageSize}&search=${search}`,
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setCustomers(data);
-          setInitialLoading(false);
-          setFetching(false);
-        });
-    }, 400);
-    return () => clearTimeout(timer);
-  }
-
-  useEffect(() => {
-    return fetchCustomer()
-  }, [search,page]);
 
   const results = customers.result;
   const total = customers.total;
